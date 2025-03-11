@@ -1,5 +1,4 @@
 if XusMasterp then XusMasterp:Stop() end
-
 if not game:IsLoaded() then
     task.delay(60, function()
         if NoShutdown then return end
@@ -44,7 +43,7 @@ local OldVolume = UGS.MasterVolume
 
 LocalPlayer.OnTeleport:Connect(function(State)
     if State == Enum.TeleportState.Started and XusMasterp.IsConnected then
-        XusMasterp:Stop()
+        XusMasterp:Stop() -- Apparently doesn't disconnect websockets on teleport so this has to be here
     end
 end)
 
@@ -78,6 +77,9 @@ local Signal = {} do
     end
 end
 
+do -- XusMasterp
+    local BTN_CLICK = 'ButtonClicked:'
+
     XusMasterp.Connected = Signal.new()
     XusMasterp.Disconnected = Signal.new()
     XusMasterp.MessageReceived = Signal.new()
@@ -87,6 +89,60 @@ end
 
     XusMasterp.ShutdownTime = 45
     XusMasterp.ShutdownOnTeleportError = true
+
+    function XusMasterp:Send(Command, Payload)
+        assert(self.Socket ~= nil, 'websocket is nil')
+        assert(self.IsConnected, 'websocket not connected')
+        assert(typeof(Command) == 'string', 'Command must be a string, got ' .. typeof(Command))
+
+        if Payload then
+            assert(typeof(Payload) == 'table', 'Payload must be a table, got ' .. typeof(Payload))
+        end
+
+        local Message = HttpService:JSONEncode {
+            Name = Command,
+            Payload = Payload
+        }
+
+        self.Socket:Send(Message)
+    end
+
+    function XusMasterp:Log(...)
+        local T = {}
+
+        for Index, Value in pairs{ ... } do
+            table.insert(T, tostring(Value))
+        end
+
+        self:Send('Log', {
+            Content = table.concat(T, ' ')
+        })
+    end
+
+    function XusMasterp:CreateElement(ElementType, Name, Content, Size, Margins, Table)
+        assert(typeof(Name) == 'string', 'string expected on argument #1, got ' .. typeof(Name))
+        assert(typeof(Content) == 'string', 'string expected on argument #2, got ' .. typeof(Content))
+
+        assert(Name:find'%W' == nil, 'argument #1 cannot contain whitespace')
+
+        if Size then assert(typeof(Size) == 'table' and #Size == 2, 'table with 2 arguments expected on argument #3, got ' .. typeof(Size)) end
+        if Margins then assert(typeof(Margins) == 'table' and #Margins == 4, 'table with 4 arguments expected on argument #4, got ' .. typeof(Margins)) end
+        
+        local Payload = {
+            Name = Name,
+            Content = Content,
+            Size = Size and table.concat(Size, ','),
+            Margin = Margins and table.concat(Margins, ',')
+        }
+
+        if Table then
+            for Index, Value in pairs(Table) do
+                Payload[Index] = Value
+            end
+        end
+
+        self:Send(ElementType, Payload)
+    end
 
     function XusMasterp:Connect(Host, Bypass)
         if not Bypass and self.IsConnected then return 'Ignoring connection request, XusMasterp is already connected' end
@@ -110,7 +166,7 @@ end
                 Host = 'localhost:5000'
             end
 
-            local Success, Socket = pcall(WSConnect, ('ws://%s/XusMasterp?%s'):format(Host, LocalPlayer.Name))
+            local Success, Socket = pcall(WSConnect, ('ws://localhost:5000/XusMasterp/%s'):format(LocalPlayer.Name))
 
             if not Success then task.wait(12) continue end
 
@@ -135,6 +191,15 @@ end
                     break
                 end
 
+                task.wait(10)
+            end
+            while self.IsConnected do
+                local Success, Error = pcall(self.Send, self, 'ping')
+    
+                if not Success or self.Terminated then
+                    break
+                end
+    
                 task.wait(1)
             end
         end
@@ -149,6 +214,7 @@ end
             pcall(function() self.Socket:Close() end)
         end
     end
+end
 
 do -- Connections
     GuiService.ErrorMessageChanged:Connect(function()
@@ -168,6 +234,8 @@ end
 
 local GEnv = getgenv()
 GEnv.XusMasterp = XusMasterp
-if not Nexus_Version then
+GEnv.performance = XusMasterp.Commands.performance
+
+if not XusMasterp_Version then
     XusMasterp:Connect()
 end
