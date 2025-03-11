@@ -143,7 +143,7 @@ do -- XusMasterp
         end
     end
 
-    function XusMasterp:Stop(
+    function XusMasterp:Stop()
         self.IsConnected = false
         self.Terminated = true
         self.Disconnected:Fire()
