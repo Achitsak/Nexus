@@ -110,7 +110,7 @@ end
                 Host = 'localhost:5000'
             end
 
-            local Success, Socket = pcall(WSConnect, ('ws://%s/XusMasterp?Username=%s'):format(Host, LocalPlayer.Name))
+            local Success, Socket = pcall(WSConnect, ('ws://%s/XusMasterp?%s'):format(Host, LocalPlayer.Name))
 
             if not Success then task.wait(12) continue end
 
