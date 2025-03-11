@@ -78,9 +78,6 @@ local Signal = {} do
     end
 end
 
-do -- XusMasterp
-    local BTN_CLICK = 'ButtonClicked:'
-
     XusMasterp.Connected = Signal.new()
     XusMasterp.Disconnected = Signal.new()
     XusMasterp.MessageReceived = Signal.new()
