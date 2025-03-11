@@ -30,6 +30,17 @@ if not WSConnect then
     return
 end
 
+local lp,po,ts = game:GetService('Players').LocalPlayer,game.CoreGui.RobloxPromptGui.promptOverlay,game:GetService('TeleportService')
+
+po.ChildAdded:connect(function(a)
+    if a.Name == 'ErrorPrompt' then
+        repeat
+            XusMasterp:Stop()
+            wait(2)
+        until false
+    end
+end)
+
 local TeleportService = game:GetService'TeleportService'
 local InputService = game:GetService'UserInputService'
 local HttpService = game:GetService'HttpService'
@@ -224,6 +235,7 @@ do -- Connections
 
         if Code >= Enum.ConnectionError.DisconnectErrors.Value then
             if not XusMasterp.ShutdownOnTeleportError and Code > Enum.ConnectionError.PlacelaunchOtherError.Value then
+                print("Errorroro")
                 return
             end
             
