@@ -13,7 +13,6 @@ po.ChildAdded:connect(function(a)
 end)
 spawn(function()
     while true do
-        print()
         local success, result = pcall(function()
             if _G.Connected then
                 local response = request(
