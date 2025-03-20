@@ -11,7 +11,7 @@ po.ChildAdded:connect(function(a)
         _G.Connected = false
     end
 end)
-spawn(function()
+task.spawn(function()
     while true do
         local success, result = pcall(function()
             if _G.Connected then
