@@ -31,12 +31,6 @@ task.spawn(function()
             end
             return response
         end)
-        
-        if not success then
-            warn("Error: " .. tostring(result))
-        else
-            print("Status updated successfully!")
-        end
         task.wait(5)
     end
 end)
