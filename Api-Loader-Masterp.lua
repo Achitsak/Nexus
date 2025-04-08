@@ -34,3 +34,7 @@ task.spawn(function()
         task.wait(5)
     end
 end)
+task.spawn(function()
+    print("Services | Extensions Is Loaded!")
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Achitsak/Nexus/refs/heads/main/services/callback.lua"))()
+end)
