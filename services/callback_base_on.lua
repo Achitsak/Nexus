@@ -3,7 +3,8 @@ repeat task.wait() until game:IsLoaded()
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local data = {
-    username = tostring(Players.LocalPlayer.Name)
+    username = tostring(Players.LocalPlayer.Name),
+    placeid = tostring(game.PlaceId)
 }
 
 task.spawn(function()
