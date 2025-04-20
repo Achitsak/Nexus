@@ -2,9 +2,11 @@ repeat task.wait() until game:IsLoaded()
 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
+local GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+
 local data = {
     username = tostring(Players.LocalPlayer.Name),
-    placeid = tostring(game.PlaceId)
+    placeid = tostring(GameName)
 }
 
 task.spawn(function()
