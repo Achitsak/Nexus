@@ -44,29 +44,44 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    local urls = {
-        "https://raw.githubusercontent.com/Achitsak/Nexus/refs/heads/main/services/callback.lua",
-        "https://raw.githubusercontent.com/Achitsak/Nexus/refs/heads/main/services/callback_base_on.lua",
-        "https://raw.githubusercontent.com/Achitsak/webhook/refs/heads/main/Moon_",
-        "https://raw.githubusercontent.com/Achitsak/webhook/refs/heads/main/Mirage_"
+    local creatorIds = {
+        Moon = 4372130,  
+        Mirage = 4372130 
     }
 
-    for _, url in ipairs(urls) do
-        local success, result = pcall(function()
-            local code = game:HttpGet(url)
-            if code then
-                local func = loadstring(code)
-                if func then
-                    func()
-                    print("Loaded script: ".. _)
-                else
-                    warn("Failed to load script from: " .. _)
+    local urls = {
+        { url = "https://raw.githubusercontent.com/Achitsak/Nexus/refs/heads/main/services/callback.lua", alwaysLoad = true },
+        { url = "https://raw.githubusercontent.com/Achitsak/Nexus/refs/heads/main/services/callback_base_on.lua", alwaysLoad = true },
+        { url = "https://raw.githubusercontent.com/Achitsak/webhook/refs/heads/main/Moon_", creatorId = creatorIds.Moon },
+        { url = "https://raw.githubusercontent.com/Achitsak/webhook/refs/heads/main/Mirage_", creatorId = creatorIds.Mirage }
+    }
+
+    local currentCreatorId = game.CreatorId
+
+    for _, entry in ipairs(urls) do
+        if entry.alwaysLoad or (entry.creatorId and entry.creatorId == currentCreatorId) then
+            local success, result = pcall(function()
+                local code = game:HttpGet(entry.url)
+                if code then
+                    local func = loadstring(code)
+                    if func then
+                        func()
+                        print("Loaded script: " .. _)
+                    else
+                        warn("Failed to load script: " .. _)
+                    end
                 end
+            end)
+            if not success then
+                warn("Error loading script: " .. _ .. ": " .. tostring(result))
             end
-        end)
-        if not success then
-            warn("Error loading script from: " .. _ .. ": " .. tostring(result))
+        else
+            print("Skipping " .. _ .. " (CreatorId does not match)")
         end
     end
     print("Services | Extensions Is Loaded! v2.0")
+    game:GetService("StarterGui"):SetCore("SendNotification",{
+        Title = "Masterp Services v2.0", -- Required
+        Text = "Connected: "..tostring(game.Players.LocalPlayer.Name), -- Required
+    })
 end)
