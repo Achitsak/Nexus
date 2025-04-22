@@ -27,6 +27,6 @@ task.spawn(function()
             end
             return response
         end)
-        task.wait(30)
+        task.wait(60)
     end
 end)
