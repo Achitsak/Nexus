@@ -1,9 +1,9 @@
 repeat task.wait() until game:IsLoaded()
 repeat task.wait() until game:GetService("Players")
 
-if not _G.Configs or not _G.MasterpConfig then 
+if not _G.MasterpConfig then 
     _G.MasterpConfig = {
-        server_port = 2124,
+        server_port = 5000,
     }
 end
 
