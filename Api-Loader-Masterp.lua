@@ -29,7 +29,7 @@ task.spawn(function()
         if not isDisconnected then
             local success, result = pcall(function()
                 local response = request({
-                    Url = string.format("http://127.0.0.1:%d/api/update", _G.MasterpConfig.server_port),
+                    Url = string.format("http://127.0.0.1:%d/api/update", _G.Configs.server_port),
                     Method = "POST",
                     Headers = {
                         ["Content-Type"] = "application/json"
@@ -60,4 +60,4 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
     Title = "Masterp Services v2.2", -- Required
     Text = "Connected: "..tostring(game.Players.LocalPlayer.Name), -- Required
 })
-warn('Masterp Client Connected: '..tostring(_G.MasterpConfig.server_port))
+warn('Masterp Client Connected: '..tostring(_G.Configs.server_port))
