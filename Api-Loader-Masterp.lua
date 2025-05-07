@@ -43,7 +43,7 @@ task.spawn(function()
                 warn("Request success for:", Players.LocalPlayer.Name)
             else
                 game:GetService("StarterGui"):SetCore("SendNotification",{
-                    Title = "Masterp Services v2.2", -- Required
+                    Title = "Masterp Services v2.3", -- Required
                     Text = "Error Pls Check Console", -- Required
                 })
                 warn("Request failed:", result)
@@ -57,7 +57,7 @@ task.spawn(function()
 end)
 
 game:GetService("StarterGui"):SetCore("SendNotification",{
-    Title = "Masterp Services v2.2", -- Required
+    Title = "Masterp Services v2.3", -- Required
     Text = "Connected: "..tostring(game.Players.LocalPlayer.Name), -- Required
 })
 warn('Masterp Client Connected: '..tostring(_G.Configs.server_port))
