@@ -35,7 +35,7 @@ screenGui.Parent = playerGui
 --// Status Frame
 local statusFrame = Instance.new("Frame")
 statusFrame.Size = UDim2.new(0, 220, 0, 70)
-statusFrame.Position = UDim2.new(1, -230, 0, 10)
+statusFrame.Position = UDim2.new(1, -230, 1, -90)
 statusFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
 statusFrame.BorderSizePixel = 0
 statusFrame.Parent = screenGui
@@ -129,7 +129,7 @@ end
 --// Adjust GUI on screen resize
 local function adjustToScreenSize()
 	local function updatePosition()
-		statusFrame.Position = UDim2.new(1, -230, 0, 10)
+		statusFrame.Position = UDim2.new(1, -230, 1, -90)
 	end
 	player:GetPropertyChangedSignal("CameraMode"):Connect(updatePosition)
 	workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(updatePosition)
@@ -153,8 +153,6 @@ end)
 task.spawn(function()
 	while true do
 		if not isDisconnected then
-			statusValueLabel.Text = "Connecting..."
-			statusValueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 			local success, result = pcall(function()
 				local response = request({
