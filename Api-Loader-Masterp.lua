@@ -62,7 +62,7 @@ task.spawn(function()
 				})
 			end
 
-			task.wait(3)
+			task.wait(math.random(3, 6))
 		else
 			break
 		end
