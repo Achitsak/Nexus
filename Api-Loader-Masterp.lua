@@ -7,8 +7,9 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
+local Request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (getgenv and getgenv().request)
 
---// Player & GUI
+--// Player
 local player = Players.LocalPlayer
 
 --// Config
@@ -40,7 +41,7 @@ task.spawn(function()
 		if not isDisconnected then
 
 			local success, result = pcall(function()
-				local response = request({
+				local response = Request({
 					Url = string.format("http://127.0.0.1:%d/api/update", _G.Configs.server_port),
 					Method = "POST",
 					Headers = {
