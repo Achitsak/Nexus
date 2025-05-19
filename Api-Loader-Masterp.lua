@@ -53,9 +53,9 @@ task.spawn(function()
 			end)
 
 			if success then
-				warn("Request success for:", player.Name)
+				--warn("Request success for:", player.Name)
 			else
-				warn("Request failed:", result)
+				--warn("Request failed:", result)
 				game:GetService("StarterGui"):SetCore("SendNotification", {
 					Title = "Masterp Services v2.3",
 					Text = "Server disconnected",
