@@ -75,3 +75,6 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 	Text = "Connected: " .. player.Name,
 })
 warn("Masterp Client Connected on port: " .. tostring(_G.Configs.server_port))
+x, p = pcall(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Achitsak/scripts/main/ui/v3.lua"))()
+end)
