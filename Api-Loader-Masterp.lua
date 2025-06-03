@@ -1,80 +1,85 @@
 repeat task.wait() until game:IsLoaded()
-repeat task.wait() until game:GetService("Players")
 
---// Services
 local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
+local GuiService = game:GetService("GuiService")
+local StarterGui = game:GetService("StarterGui")
+
 local Request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (getgenv and getgenv().request)
 
---// Player
-local player = Players.LocalPlayer
-
---// Config
 if not _G.Configs then 
     _G.Configs = {
         server_port = 5000,
     }
 end
 
---// Data
 local data = {
-    username = player.Name
+	username = LocalPlayer.Name
 }
 
---// Disconnection watcher
 local isDisconnected = false
 local promptOverlay = game.CoreGui:WaitForChild("RobloxPromptGui"):WaitForChild("promptOverlay")
 
 promptOverlay.ChildAdded:Connect(function(child)
 	if child.Name == "ErrorPrompt" and child:FindFirstChild("MessageArea") then
 		isDisconnected = true
-		warn("ErrorPrompt detected.")
+		warn("ErrorPrompt disconnected.")
 	end
 end)
 
---// Loop to check server connectivity
+LocalPlayer.OnTeleport:Connect(function(State)
+	if State == Enum.TeleportState.Started and not isDisconnected then
+		isDisconnected = true
+		warn("Teleport disconnected.")
+	end
+end)
+
 task.spawn(function()
-	while true do
-		if not isDisconnected then
+	while not isDisconnected do
+		local success, result = pcall(function()
+			return HttpService:JSONDecode(Request({
+				Url = ("http://127.0.0.1:%d/api/update"):format(_G.Configs.server_port),
+				Method = "POST",
+				Headers = { ["Content-Type"] = "application/json" },
+				Body = HttpService:JSONEncode(data)
+			}).Body)
+		end)
 
-			local success, result = pcall(function()
-				local response = Request({
-					Url = string.format("http://127.0.0.1:%d/api/update", _G.Configs.server_port),
-					Method = "POST",
-					Headers = {
-						["Content-Type"] = "application/json"
-					},
-					Body = HttpService:JSONEncode(data)
-				})
-				return HttpService:JSONDecode(response.Body)
-			end)
-
-			if success then
-				--warn("Request success for:", player.Name)
-			else
-				--warn("Request failed:", result)
-				game:GetService("StarterGui"):SetCore("SendNotification", {
+		if not success then
+			pcall(function()
+				StarterGui:SetCore("SendNotification", {
 					Title = "Masterp Services v2.3",
-					Text = "Server disconnected",
+					Text = "Client Not Connected!",
 				})
-			end
-
-			task.wait(math.random(3, 6))
-		else
-			break
+			end)
 		end
+
+		task.wait(math.random(3, 6))
 	end
 end)
 
---// Initial Notification
-game:GetService("StarterGui"):SetCore("SendNotification", {
-	Title = "Masterp Services v2.3",
-	Text = "Connected: " .. player.Name,
+GuiService.ErrorMessageChanged:Connect(function()
+    if NoShutdown then return end
+    local Code = GuiService:GetErrorCode().Value
+    if Code >= Enum.ConnectionError.DisconnectErrors.Value then
+        if Code > Enum.ConnectionError.PlacelaunchOtherError.Value then
+            return
+        end
+        isDisconnected = true
+    end
+end)
+
+StarterGui:SetCore("SendNotification", {
+    Title = "Masterp Services v2.4",
+    Text = "Connected: " .. LocalPlayer.Name,
 })
-warn("Masterp Client Connected on port: " .. tostring(_G.Configs.server_port))
+
+warn("Masterp Client Connected: " .. tostring(_G.Configs.server_port))
+
 x, p = pcall(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Achitsak/scripts/main/ui/v3.lua"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Achitsak/scripts/main/ui/v3.lua"))()
 end)
