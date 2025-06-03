@@ -1,13 +1,33 @@
 repeat task.wait() until game:IsLoaded()
 
+if not game:IsLoaded() then
+    task.delay(60, function()
+        if NoShutdown then return end
+        if not game:IsLoaded() then
+            return game:Shutdown()
+        end
+        local Code = game:GetService'GuiService':GetErrorCode().Value
+        if Code >= Enum.ConnectionError.DisconnectErrors.Value then
+            return game:Shutdown()
+        end
+    end)
+    game.Loaded:Wait()
+end
+
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local HttpService = game:GetService("HttpService")
 local GuiService = game:GetService("GuiService")
 local StarterGui = game:GetService("StarterGui")
 local RunService = game:GetService("RunService")
-
 local Request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (getgenv and getgenv().request)
+local isDisconnected = false
+
+LocalPlayer.OnTeleport:Connect(function(State)
+    if State == Enum.TeleportState.Started and Nexus.IsConnected then
+        isDisconnected = true
+    end
+end)
 
 if not _G.Configs then 
     _G.Configs = {
@@ -19,46 +39,13 @@ local data = {
 	username = LocalPlayer.Name
 }
 
-local isDisconnected = false
-
-local function handleDisconnection(reason)
-	if not isDisconnected then
-		isDisconnected = true
-		warn("Disconnected: " .. reason)
-
-		task.delay(35, function()
-			isDisconnected = false
-			warn("Reconnected after 35s (" .. reason .. ")")
-		end)
-	end
-end
-
--- Detect ErrorPrompt
-local promptOverlay = game.CoreGui:WaitForChild("RobloxPromptGui"):WaitForChild("promptOverlay")
 promptOverlay.ChildAdded:Connect(function(child)
 	if child.Name == "ErrorPrompt" and child:FindFirstChild("MessageArea") then
-		handleDisconnection("ErrorPrompt")
-	end
-end)
-
--- Detect Teleport
-LocalPlayer.OnTeleport:Connect(function(State)
-	if State == Enum.TeleportState.Started then
-		handleDisconnection("Teleport")
-	end
-end)
-
--- Detect if Player is removed from game
-LocalPlayer.AncestryChanged:Connect(function(_, parent)
-	if not parent then
-		handleDisconnection("Player removed (AncestryChanged)")
-	end
-end)
-
--- Detect PlayerRemoving
-Players.PlayerRemoving:Connect(function(player)
-	if player == LocalPlayer then
-		handleDisconnection("PlayerRemoving")
+		local code = game:GetService("GuiService"):GetErrorCode().Value
+		if code > 0 then
+			isDisconnected = true
+			warn("Disconnected with error code:", code)
+		end
 	end
 end)
 
