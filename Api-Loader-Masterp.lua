@@ -79,4 +79,5 @@ warn("Masterp Client Connected: " .. tostring(_G.Configs.server_port))
 
 x, p = pcall(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Achitsak/scripts/main/ui/v3.lua"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Achitsak/Nexus/main/services/callback_base_on.lua"))()
 end)
