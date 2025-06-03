@@ -2,10 +2,7 @@ repeat task.wait() until game:IsLoaded()
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
-local TeleportService = game:GetService("TeleportService")
 local GuiService = game:GetService("GuiService")
 local StarterGui = game:GetService("StarterGui")
 
