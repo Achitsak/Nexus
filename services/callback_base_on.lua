@@ -1,32 +1,29 @@
-repeat task.wait() until game:IsLoaded()
+repeat task.wait(5) until game:IsLoaded()
 
 local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
-local GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+local Request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (getgenv and getgenv().request)
 
 local data = {
-    username = tostring(Players.LocalPlayer.Name),
-    placeid = tostring(GameName)
+	username = game.Players.LocalPlayer.Name,
+	placeid = game.PlaceId,
+	jobid = game.JobId,
+	gamename = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)["Name"]
 }
 
+local jsonBody = HttpService:JSONEncode(data)
+
 task.spawn(function()
-    while true do
+    while true do task.wait()
         local success, result = pcall(function()
-            local response = request(
-                {
-                    ["Url"] = 'https://66521a66-ce71-440d-a511-d707d7d941d3-00-30jg5qgxjr16o.pike.replit.dev/submit',
-                    ["Method"] = "POST",
-                    ["Body"] = HttpService:JSONEncode(data),
-                    ["Headers"] = {
-                        ["Content-Type"] = "application/json"
-                    }
-                }
-            )
-            if response and response.Body then
-                return HttpService:JSONDecode(response.Body)
-            end
-            return response
+            return Request({
+                Url = "https://backend-p5i9.onrender.com/api/tracker",
+                Method = "POST",
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                },
+                Body = jsonBody
+            })
         end)
-        task.wait(60)
+        task.wait(5)
     end
 end)
