@@ -21,6 +21,7 @@ local GuiService = game:GetService("GuiService")
 local StarterGui = game:GetService("StarterGui")
 local RunService = game:GetService("RunService")
 local Request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (getgenv and getgenv().request)
+local promptOverlay = game.CoreGui:WaitForChild("RobloxPromptGui"):WaitForChild("promptOverlay")
 local isDisconnected = false
 
 LocalPlayer.OnTeleport:Connect(function(State)
