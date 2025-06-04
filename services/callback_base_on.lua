@@ -24,6 +24,6 @@ task.spawn(function()
                 Body = jsonBody
             })
         end)
-        task.wait(5)
+        task.wait(15)
     end
 end)
