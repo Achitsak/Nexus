@@ -30,9 +30,9 @@ LocalPlayer.OnTeleport:Connect(function(State)
     end
 end)
 
-if not _G.Configs then 
-    _G.Configs = {
-        server_port = 5000,
+if not _G.MasterpConfigs then 
+    _G.MasterpConfigs = {
+        server_port = 2124,
     }
 end
 
@@ -56,7 +56,7 @@ task.spawn(function()
 		if not isDisconnected then
 			local success, result = pcall(function()
 				return HttpService:JSONDecode(Request({
-					Url = ("http://127.0.0.1:%d/api/update"):format(_G.Configs.server_port),
+					Url = ("http://127.0.0.1:%d/api/update"):format(_G.MasterpConfigs.server_port),
 					Method = "POST",
 					Headers = { ["Content-Type"] = "application/json" },
 					Body = HttpService:JSONEncode(data)
@@ -81,7 +81,7 @@ StarterGui:SetCore("SendNotification", {
     Title = "Masterp Services v2.4",
     Text = "Connected: " .. LocalPlayer.Name,
 })
-warn("Masterp Client Connected: " .. tostring(_G.Configs.server_port))
+warn("Masterp Client Connected: " .. tostring(_G.MasterpConfigs.server_port))
 
 -- Load remote scripts
 local success, err = pcall(function()
