@@ -2,12 +2,14 @@ repeat task.wait(5) until game:IsLoaded()
 
 local HttpService = game:GetService("HttpService")
 local Request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (getgenv and getgenv().request)
+local Executor = identifyexecutor()
 
 local data = {
 	username = game.Players.LocalPlayer.Name,
 	placeid = game.PlaceId,
 	jobid = game.JobId,
 	gamename = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)["Name"]
+	executor = Executor
 }
 
 local jsonBody = HttpService:JSONEncode(data)
