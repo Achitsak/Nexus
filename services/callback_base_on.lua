@@ -8,7 +8,7 @@ local data = {
 	username = game.Players.LocalPlayer.Name,
 	placeid = game.PlaceId,
 	jobid = game.JobId,
-	gamename = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)["Name"]
+	gamename = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)["Name"],
 	executor = Executor
 }
 
