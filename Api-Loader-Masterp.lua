@@ -86,7 +86,7 @@ warn("Masterp Client Connected: " .. tostring(_G.MasterpConfigs.server_port))
 -- Load remote scripts
 local success, err = pcall(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Achitsak/scripts/main/ui/v3.lua"))()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/Achitsak/Nexus/main/services/callback_base_on.lua"))()
+	--loadstring(game:HttpGet("https://raw.githubusercontent.com/Achitsak/Nexus/main/services/callback_base_on.lua"))()
 end)
 if not success then
 	warn("Failed to load remote scripts:", err)
