@@ -1,18 +1,5 @@
 repeat task.wait() until game:IsLoaded()
-
-if not game:IsLoaded() then
-    task.delay(60, function()
-        if NoShutdown then return end
-        if not game:IsLoaded() then
-            return game:Shutdown()
-        end
-        local Code = game:GetService'GuiService':GetErrorCode().Value
-        if Code >= Enum.ConnectionError.DisconnectErrors.Value then
-            return game:Shutdown()
-        end
-    end)
-    game.Loaded:Wait()
-end
+repeat task.wait() until game.Players.LocalPlayer
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -20,15 +7,10 @@ local HttpService = game:GetService("HttpService")
 local GuiService = game:GetService("GuiService")
 local StarterGui = game:GetService("StarterGui")
 local RunService = game:GetService("RunService")
-local Request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (getgenv and getgenv().request)
-local promptOverlay = game.CoreGui:WaitForChild("RobloxPromptGui"):WaitForChild("promptOverlay")
+local Request = http_request or request
+local PromptOverlay = game.CoreGui:WaitForChild("RobloxPromptGui"):WaitForChild("promptOverlay")
 local isDisconnected = false
 
-LocalPlayer.OnTeleport:Connect(function(State)
-    if State == Enum.TeleportState.Started and Nexus.IsConnected then
-        isDisconnected = true
-    end
-end)
 
 if not _G.MasterpConfigs then 
     _G.MasterpConfigs = {
@@ -40,13 +22,26 @@ local data = {
 	username = LocalPlayer.Name
 }
 
-promptOverlay.ChildAdded:Connect(function(child)
-	if child.Name == "ErrorPrompt" and child:FindFirstChild("MessageArea") then
-		local code = game:GetService("GuiService"):GetErrorCode().Value
-		if code > 0 then
-			isDisconnected = true
-			warn("Disconnected with error code:", code)
-		end
+LocalPlayer.OnTeleport:Connect(function(State)
+    if State == Enum.TeleportState.Started then
+        isDisconnected = true
+    end
+end)
+
+Players.LocalPlayer.AncestryChanged:Connect(function()
+    if not Players.LocalPlayer:IsDescendantOf(Players) then
+        isDisconnected = true
+    end
+end)
+
+PromptOverlay.ChildAdded:Connect(function(child)
+	if child.Name == "ErrorPrompt" then
+	 	pcall(function()
+                local code = game:GetService("GuiService"):GetErrorCode().Value
+                if code > 0 then
+                isDisconnected = true
+            end
+        end)
 	end
 end)
 
@@ -62,23 +57,12 @@ task.spawn(function()
 					Body = HttpService:JSONEncode(data)
 				}).Body)
 			end)
-
-			if not success then
-				pcall(function()
-					StarterGui:SetCore("SendNotification", {
-						Title = "Masterp Services v2.4",
-						Text = "Client Not Connected!",
-					})
-				end)
-			end
 		end
 		task.wait(math.random(3, 6))
 	end
 end)
 
--- Notify when fully connected
-StarterGui:SetCore("SendNotification", {
-    Title = "Masterp Services v2.4",
-    Text = "Connected: " .. LocalPlayer.Name,
-})
-warn("Masterp Client Connected: " .. tostring(_G.MasterpConfigs.server_port))
+-- Load remote scripts
+local success, err = pcall(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Achitsak/scripts/main/ui/v3.lua"))()
+end)
