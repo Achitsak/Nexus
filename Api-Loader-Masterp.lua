@@ -37,7 +37,7 @@ end)
 PromptOverlay.ChildAdded:Connect(function(child)
 	if child.Name == "ErrorPrompt" then
 	 	pcall(function()
-                local code = game:GetService("GuiService"):GetErrorCode().Value
+                local code = game:GetService("GuiService"):GetErrorCode()
                 if code > 0 then
                 isDisconnected = true
             end
