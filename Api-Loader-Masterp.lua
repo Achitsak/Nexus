@@ -45,22 +45,9 @@ PromptOverlay.ChildAdded:Connect(function(child)
 	end
 end)
 
-local function checkErrorPrompt()
-    local CoreGui = game:GetService("CoreGui")
-    local errorPrompt = CoreGui:FindFirstChild("ErrorPrompt", true)
-
-    if errorPrompt then
-        local label = errorPrompt:FindFirstChildWhichIsA("TextLabel", true)
-        if label and label.Text then
-            isDisconnected = true
-        end
-    end
-end
-
 -- Update status to server
 task.spawn(function()
 	while true do
-		checkErrorPrompt()
 		if not isDisconnected then
 			local success, result = pcall(function()
 				return HttpService:JSONDecode(Request({
