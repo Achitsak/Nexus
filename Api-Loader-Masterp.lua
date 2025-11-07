@@ -1,14 +1,14 @@
 repeat task.wait() until game:IsLoaded()
 repeat task.wait() until game.Players.LocalPlayer
 
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local HttpService = game:GetService("HttpService")
-local GuiService = game:GetService("GuiService")
-local StarterGui = game:GetService("StarterGui")
-local RunService = game:GetService("RunService")
-local Request = http_request or request
-local PromptOverlay = game.CoreGui:WaitForChild("RobloxPromptGui"):WaitForChild("promptOverlay")
+local Players 		 = game:GetService("Players")
+local LocalPlayer 	 = Players.LocalPlayer
+local HttpService 	 = game:GetService("HttpService")
+local GuiService 	 = game:GetService("GuiService")
+local StarterGui 	 = game:GetService("StarterGui")
+local RunService 	 = game:GetService("RunService")
+local Request 		 = http_request or request
+local PromptOverlay  = game.CoreGui:WaitForChild("RobloxPromptGui"):WaitForChild("promptOverlay")
 local isDisconnected = false
 
 
@@ -45,9 +45,22 @@ PromptOverlay.ChildAdded:Connect(function(child)
 	end
 end)
 
+local function checkErrorPrompt()
+    local CoreGui = game:GetService("CoreGui")
+    local errorPrompt = CoreGui:FindFirstChild("ErrorPrompt", true)
+
+    if errorPrompt then
+        local label = errorPrompt:FindFirstChildWhichIsA("TextLabel", true)
+        if label and label.Text then
+            isDisconnected = true
+        end
+    end
+end
+
 -- Update status to server
 task.spawn(function()
 	while true do
+		checkErrorPrompt()
 		if not isDisconnected then
 			local success, result = pcall(function()
 				return HttpService:JSONDecode(Request({
