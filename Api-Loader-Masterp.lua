@@ -69,14 +69,6 @@ function ErrorFinder(v)
     end
 end
 
-detected = game.CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(ErrorFinder)
-
-task.delay(35, function()
-    if detected then
-        isDisconnected = true
-    end
-end)
-
 -- Update status to server
 task.spawn(function()
 	while true do
