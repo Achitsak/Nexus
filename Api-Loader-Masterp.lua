@@ -38,8 +38,7 @@ end)
 local function CheckErrorPrompt(v)
 	if v.Name == "ErrorPrompt" then
 		local function LogError()
-			local title = "Unknown"
-			local message = "Unknown"
+			local title, message = "Unknown", "Unknown"
 
 			local titleFrame = v:FindFirstChild("TitleFrame")
 			local titleLabel = titleFrame and titleFrame:FindFirstChild("ErrorTitle")
@@ -73,7 +72,7 @@ game:GetService("NetworkClient").ChildRemoved:Connect(function(child)
 	isDisconnected = true
 end)
 
-Overlay.ChildAdded:Connect(CheckErrorPrompt)
+PromptOverlay.ChildAdded:Connect(CheckErrorPrompt)
 
 task.spawn(function()
 	while true do
@@ -92,7 +91,7 @@ task.spawn(function()
 	end
 end)
 
--- Load remote scripts
+-- Load External Modules
 local success, err = pcall(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Achitsak/scripts/main/ui/v3.lua"))()
 end)
