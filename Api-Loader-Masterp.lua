@@ -1,15 +1,17 @@
 repeat task.wait() until game:IsLoaded()
 repeat task.wait() until game.Players.LocalPlayer
 
-local Players 		 = game:GetService("Players")
-local LocalPlayer 	 = Players.LocalPlayer
-local HttpService 	 = game:GetService("HttpService")
-local GuiService 	 = game:GetService("GuiService")
-local StarterGui 	 = game:GetService("StarterGui")
-local RunService 	 = game:GetService("RunService")
+-- Services
+local Players        = game:GetService("Players")
+local LocalPlayer    = Players.LocalPlayer
+local HttpService    = game:GetService("HttpService")
+local GuiService     = game:GetService("GuiService")
+local StarterGui     = game:GetService("StarterGui")
+local RunService     = game:GetService("RunService")
 local PromptOverlay  = game.CoreGui:WaitForChild("RobloxPromptGui"):WaitForChild("promptOverlay")
-local Request 		 = http_request or request
+local Request        = http_request or request
 local isDisconnected = false
+
 
 
 if not _G.MasterpConfigs then 
@@ -34,41 +36,50 @@ Players.LocalPlayer.AncestryChanged:Connect(function()
     end
 end)
 
-PromptOverlay.ChildAdded:Connect(function(child)
-	if child.Name == "ErrorPrompt" then
-		task.defer(function()
-			local title, message = "Unknown", "Unknown"
-			local titleFrame = child:FindFirstChild("TitleFrame")
+local function CheckErrorPrompt(v)
+	if v.Name == "ErrorPrompt" then
+		local function LogError()
+			local title = "Unknown"
+			local message = "Unknown"
+
+			local titleFrame = v:FindFirstChild("TitleFrame")
 			local titleLabel = titleFrame and titleFrame:FindFirstChild("ErrorTitle")
 			if titleLabel and titleLabel.Text and titleLabel.Text ~= "" then
 				title = titleLabel.Text
 			end
-			local msg = child:FindFirstChildWhichIsA("TextLabel", true)
+
+			local msg = v:FindFirstChildWhichIsA("TextLabel", true)
 			if msg and msg.Text and msg.Text ~= "" then
 				message = msg.Text
 			end
 
-			pcall(function()
-				local code = GuiService:GetErrorCode()
-				if code > 0 then
-					isDisconnected = true
-				end
-			end)
-
-			if title:find("Disconnected") or title:find("Teleport Failed") then
+			if title ~= "Unknown" or message ~= "Unknown" then
 				isDisconnected = true
+			end
+		end
+
+		if v.Visible then
+			LogError()
+		end
+
+		v:GetPropertyChangedSignal("Visible"):Connect(function()
+			if v.Visible then
+				LogError()
 			end
 		end)
 	end
-end)
+end
 
 game:GetService("NetworkClient").ChildRemoved:Connect(function(child)
 	isDisconnected = true
 end)
 
+Overlay.ChildAdded:Connect(CheckErrorPrompt)
+
 -- Update status to server
 task.spawn(function()
 	while true do
+		print(isDisconnected)
 		if not isDisconnected then
 			local success, result = pcall(function()
 				return HttpService:JSONDecode(Request({
