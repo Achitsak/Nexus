@@ -36,38 +36,35 @@ end)
 
 PromptOverlay.ChildAdded:Connect(function(child)
 	if child.Name == "ErrorPrompt" then
-	 	pcall(function()
-                local code = game:GetService("GuiService"):GetErrorCode()
-                if code > 0 then
-                isDisconnected = true
-            end
-        end)
+		task.defer(function()
+			local title, message = "Unknown", "Unknown"
+			local titleFrame = child:FindFirstChild("TitleFrame")
+			local titleLabel = titleFrame and titleFrame:FindFirstChild("ErrorTitle")
+			if titleLabel and titleLabel.Text and titleLabel.Text ~= "" then
+				title = titleLabel.Text
+			end
+			local msg = child:FindFirstChildWhichIsA("TextLabel", true)
+			if msg and msg.Text and msg.Text ~= "" then
+				message = msg.Text
+			end
+
+			pcall(function()
+				local code = GuiService:GetErrorCode()
+				if code > 0 then
+					isDisconnected = true
+				end
+			end)
+
+			if title:find("Disconnected") or title:find("Teleport Failed") then
+				isDisconnected = true
+			end
+		end)
 	end
 end)
 
 game:GetService("NetworkClient").ChildRemoved:Connect(function(child)
 	isDisconnected = true
 end)
-
-function ErrorFinder(v)
-    if v.Name == "ErrorPrompt" then
-        if v.Visible then
-        
-            if v.TitleFrame.ErrorTitle.Text == "Teleport Failed" then
-                isDisconnected = true
-            end
-        end
-        
-        v:GetPropertyChangedSignal("Visible"):Connect(function()
-            if v.Visible then
-
-                if v.TitleFrame.ErrorTitle.Text == "Teleport Failed" then
-                    isDisconnected = true
-                end
-            end
-        end)
-    end
-end
 
 -- Update status to server
 task.spawn(function()
