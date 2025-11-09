@@ -13,7 +13,6 @@ local Request        = http_request or request
 local isDisconnected = false
 
 
-
 if not _G.MasterpConfigs then 
     _G.MasterpConfigs = {
         server_port = 2124,
@@ -76,7 +75,6 @@ end)
 
 Overlay.ChildAdded:Connect(CheckErrorPrompt)
 
--- Update status to server
 task.spawn(function()
 	while true do
 		print(isDisconnected)
